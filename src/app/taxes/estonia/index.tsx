@@ -6,7 +6,7 @@
 
 import { useState, useMemo } from "react"; 
 import { Input, Divider, Card } from "@nextui-org/react";
-import { roundToDecimalPlace } from "src/app/utils";
+import { roundToDecimalPlace } from "@/utils";
 
 class EstoniaPersonalIncome {
   _incomeTaxPercent: number;
