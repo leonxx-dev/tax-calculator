@@ -1,7 +1,8 @@
 "use client";
 
 /**
- * Tax exemption calculation taklen from: https://www.sotsiaalkindlustusamet.ee/en/pension-and-benefits/pension-amount/benefits-and-pension-taxed-income-tax
+ * Tax exemption calculation taklen from:
+ * https://www.sotsiaalkindlustusamet.ee/en/pension-and-benefits/pension-amount/benefits-and-pension-taxed-income-tax
  */
 
 import { useState, useMemo } from "react"; 
@@ -22,7 +23,7 @@ class EstoniaPersonalIncome {
     this._pensionPercent = 0.02; // 2% pension contribution
     this._taxExemptionYearIncomeBottom = 14400; // Below this income is where maximum tax exemption is applied
     this._taxExemptionYearIncomeTop = 25200; // Income where regular incom tax is applied
-    this._taxExemptionYearMax = 7848; // Maximum tax exeption amount
+    this._taxExemptionYearMax = 7848; // Maximum tax exemption amount
   }
 
   get incomeTaxPercent() {
@@ -97,7 +98,7 @@ class EstoniaPersonalIncome {
 
 const estoniaPersonalIncomeDeduction = new EstoniaPersonalIncome()
 
-const EstoniaPersonalIncomeDeduction = () => {
+const EstoniaPersonalIncomeCard = () => {
   const [income, setIncome] = useState("0")
 
   const calculatedDeduction = useMemo(() => {
@@ -108,30 +109,26 @@ const EstoniaPersonalIncomeDeduction = () => {
     <Card className="w-[500px] p-4">
       <h3 className="text-xl mb-4">Personal income breakdown</h3>
       <Input size="lg" type="number" label="Gross yearly income" min="0" defaultValue="0" value={income} onChange={({ target }) => setIncome(target.value)} />
-      <div className="mt-4">
-        
-      </div>
-      
-      
-      <h4 className="text-lg mb-2">Taxes and Social Security Contributions</h4>
-      <div className="w-full flex justify-between">
-        <div>Income tax <span>{estoniaPersonalIncomeDeduction.incomeTaxPercent}%</span></div>
+          
+      <h4 className="text-lg my-4 text-xl">Taxes and Social Security Contributions</h4>
+      <div className="w-full flex justify-between text-default-400">
+        <div>Income tax</div>
         <div>- { calculatedDeduction.incomeTax }</div>
       </div>
-      <div className="w-full flex justify-between">
-        <div>Unemployment insurance <span>{estoniaPersonalIncomeDeduction.unemploymentInsurancePercent}%</span></div>
+      <div className="w-full flex justify-between text-default-400">
+        <div>Unemployment insurance</div>
         <div>- { calculatedDeduction.unemploymentInsurance }</div>
       </div>
-      <div className="w-full flex justify-between">
-        <div>Pension <span>{estoniaPersonalIncomeDeduction.pensionPercent}%</span></div>
+      <div className="w-full flex justify-between text-default-400">
+        <div>Pension</div>
         <div>- { calculatedDeduction.pension }</div>
       </div>
-      <div className="w-full flex justify-between text-xl my-2">
+      <div className="w-full flex justify-between">
         <div>Total</div>
         <div>- { calculatedDeduction.totalDeduction }</div>
       </div>
       <Divider className="my-4" />
-      <div className="w-full flex justify-between text-xl">
+      <div className="w-full flex justify-between  text-lg">
           <div>Net income</div>
           <div>{ calculatedDeduction.netIncome }</div>
         </div>
@@ -139,4 +136,4 @@ const EstoniaPersonalIncomeDeduction = () => {
   )
 }
 
-export default EstoniaPersonalIncomeDeduction
+export default EstoniaPersonalIncomeCard
