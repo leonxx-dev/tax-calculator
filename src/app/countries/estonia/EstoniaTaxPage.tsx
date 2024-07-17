@@ -8,7 +8,7 @@
 import { useState, useMemo } from "react";
 import { Input, Divider, Card } from "@nextui-org/react";
 import { roundToDecimalPlace } from "@/utils";
-import Calculator from "./calculator";
+import Calculator from "./Calculator";
 
 const EstoniaTaxPage = () => {
   return (

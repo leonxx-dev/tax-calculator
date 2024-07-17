@@ -1,13 +1,15 @@
+import constants from "./constants";
 import { PeriodType } from "@/types";
 
 function calculateTaxExemption(income: number = 0, period: PeriodType) {
   /**
    * All constants are monthly based.
+   * Period can be 1 for monthly income and 12 for annual.
    */
-  const INCOME_TRESHOLD_1 = 1200 * period; // Monthly gross income. Below this income is where maximum tax exemption is applied.
-  const INCOME_TRESHOLD_2 = 2100 * period; // Monthly gross income. Income where regular income tax is applied.
-  const BASIC_EXEMPION_MAX = 654 * period; // Maximum tax exemption amount.
-  const MAGIC_NUMBER = 900 * period; // This is something tha I don't know.
+  const INCOME_TRESHOLD_1 = constants.INCOME_TRESHOLD_1 * period;
+  const INCOME_TRESHOLD_2 = constants.INCOME_TRESHOLD_2 * period;
+  const BASIC_EXEMPION_MAX = constants.BASIC_EXEMPION_MAX * period;
+  const MAGIC_NUMBER = constants.MAGIC_NUMBER * period;
   
   if (income <= INCOME_TRESHOLD_1) {
     return BASIC_EXEMPION_MAX;

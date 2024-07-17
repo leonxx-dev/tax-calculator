@@ -1,4 +1,4 @@
-import EstoniaTaxPage from "./countries/estonia/page";
+import EstoniaTaxPage from "./countries/estonia/EstoniaTaxPage";
 
 export default function Home() {
   return (

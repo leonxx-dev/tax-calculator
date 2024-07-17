@@ -10,18 +10,17 @@ import {
   sumAll
 } from "./functions";
 import { roundToDecimalPlace } from "@/utils";
+import constants from "./constants";
 
 const Calculator = () => {
   const [income, setIncome] = useState(0);
   const [period, setPeriod] = useState<PeriodType>(1);
 
-  // Employer tax rates
-  const socialTaxRate = 33; // 33% Social tax.
-  const employerUnemploymentInsurancePremiumRate = 0.8; // 0.8% Unemployment insurance premium rate for employer.
-  // Income tax rates
-  const incomeTaxRate = 20; // 20% Income tax.
-  const employeeUnemploymentInsurancePremiumRate = 1.6; // 1.6% Unemployment insurance premium rate for employee.
-  const pensionContributionRate = 2; // 2% Pension contribution.
+  const SOCIAL_TAX_RATE = constants.SOCIAL_TAX_RATE;
+  const EMPLOYER_UNEMPLOYMENT_INSURANCE_PREMIUM_RATE = constants.EMPLOYER_UNEMPLOYMENT_INSURANCE_PREMIUM_RATE;
+  const INCOME_TAX_RATE = constants.INCOME_TAX_RATE;
+  const UNEMPLOYMENT_INSURANCE_PREMIUM_RATE = constants.UNEMPLOYMENT_INSURANCE_PREMIUM_RATE;
+  const PENSION_CONTRIBUTION_RATE = constants.PENSION_CONTRIBUTION_RATE;
 
   const periods = [
     {
@@ -35,11 +34,11 @@ const Calculator = () => {
   ];
 
   const socialTax = useMemo(() => {
-    return calculatePercentageBasedTax(income, socialTaxRate);
+    return calculatePercentageBasedTax(income, SOCIAL_TAX_RATE);
   }, [income]);
 
   const employerUnemploymentInsurancePremium = useMemo(() => {
-    return calculatePercentageBasedTax(income, employerUnemploymentInsurancePremiumRate);
+    return calculatePercentageBasedTax(income, EMPLOYER_UNEMPLOYMENT_INSURANCE_PREMIUM_RATE);
   }, [income]);
 
   const tatalPaidByEmployer = useMemo(() => {
@@ -49,15 +48,15 @@ const Calculator = () => {
   const incomeTax = useMemo(() => {
     const taxExemption = calculateTaxExemption(income, period);
     const taxableIncome = calculateTaxableIncome(income, taxExemption);
-    return calculatePercentageBasedTax(taxableIncome, incomeTaxRate);
+    return calculatePercentageBasedTax(taxableIncome, INCOME_TAX_RATE);
   }, [income, period]);
 
   const employeeUnemploymentInsurancePremium = useMemo(() => {
-    return calculatePercentageBasedTax(income, employeeUnemploymentInsurancePremiumRate);
+    return calculatePercentageBasedTax(income, UNEMPLOYMENT_INSURANCE_PREMIUM_RATE);
   }, [income]);
 
   const pensionContribution = useMemo(() => {
-    return calculatePercentageBasedTax(income, pensionContributionRate);
+    return calculatePercentageBasedTax(income, PENSION_CONTRIBUTION_RATE);
   }, [income]);
 
   const totalTaxPaidOnIncome = useMemo(() => {
@@ -69,7 +68,7 @@ const Calculator = () => {
   }, [income, totalTaxPaidOnIncome]);
 
   return (
-    <Card className="w-full items-center gap-2 px-0 py-2 sm:p-4">
+    <Card className="w-full items-center gap-2 px-0 py-4 sm:p-4">
       <Tabs color="primary" aria-label="Tabs colors" radius="full" selectedKey={period} onSelectionChange={(key) => setPeriod(key as PeriodType)}>
         { periods.map(({ key, label }) => <Tab key={key} title={label} />) }
       </Tabs>
@@ -99,11 +98,11 @@ const Calculator = () => {
             <div>{ income } €</div>
           </div>
           <div className="w-full flex justify-between text-default-600">
-            <div>Social Tax</div>
+            <div>Social Tax <span className="italic text-danger">{ SOCIAL_TAX_RATE }%</span></div>
             <div>{ roundToDecimalPlace(socialTax, 2) } €</div>
           </div>
           <div className="w-full flex justify-between text-default-600">
-            <div>Unemployment Insurance</div>
+            <div>Unemployment Insurance <span className="italic text-danger">{ EMPLOYER_UNEMPLOYMENT_INSURANCE_PREMIUM_RATE }%</span></div>
             <div>{ roundToDecimalPlace(employerUnemploymentInsurancePremium, 2) } €</div>
           </div>
           <Divider className="my-2" />
@@ -116,15 +115,15 @@ const Calculator = () => {
         <div  className="p-4">
           <h2 className="text-default-400">Gross Income</h2>
           <div className="w-full flex justify-between text-default-600">
-            <div>Income Tax</div>
+            <div>Income Tax <span className="italic text-danger">{ INCOME_TAX_RATE }%</span></div>
             <div>{ roundToDecimalPlace(incomeTax, 2) } €</div>
           </div>
           <div className="w-full flex justify-between text-default-600">
-            <div>Unemployment Insurance</div>
+            <div>Unemployment Insurance <span className="italic text-danger">{ UNEMPLOYMENT_INSURANCE_PREMIUM_RATE }%</span></div>
             <div>{ roundToDecimalPlace(employeeUnemploymentInsurancePremium, 2) } €</div>
           </div>
           <div className="w-full flex justify-between text-default-600">
-            <div>Pension Contribution</div>
+            <div>Pension Contribution <span className="italic text-danger">{ PENSION_CONTRIBUTION_RATE }%</span></div>
             <div>{ roundToDecimalPlace(pensionContribution, 2) } €</div>
           </div>
           <Divider className="my-2" />
