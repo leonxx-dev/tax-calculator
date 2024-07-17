@@ -1,14 +1,20 @@
-const maxTaxExemptionIncome = 1200; // Monthly gross income. Below this income is where maximum tax exemption is applied.
-const zeroTaxExemptionIncome = 2100; // Monthly gross income. Income where regular income tax is applied.
-const maxTaxExemption = 654; // Maximum tax exemption amount.
+import { PeriodType } from "@/types";
 
-function calculateTaxExemption(income: number = 0, period: number) {
-  if (income <= maxTaxExemptionIncome * period) {
-    return maxTaxExemption * period;
+function calculateTaxExemption(income: number = 0, period: PeriodType) {
+  /**
+   * All constants are monthly based.
+   */
+  const INCOME_TRESHOLD_1 = 1200 * period; // Monthly gross income. Below this income is where maximum tax exemption is applied.
+  const INCOME_TRESHOLD_2 = 2100 * period; // Monthly gross income. Income where regular income tax is applied.
+  const BASIC_EXEMPION_MAX = 654 * period; // Maximum tax exemption amount.
+  const MAGIC_NUMBER = 900 * period; // This is something tha I don't know.
+  
+  if (income <= INCOME_TRESHOLD_1) {
+    return BASIC_EXEMPION_MAX;
   }
 
-  if (income >= (maxTaxExemptionIncome * period) && income < (zeroTaxExemptionIncome * period)) {
-    return (maxTaxExemption * period) - (maxTaxExemption * period) / (900 * period) * (income - (maxTaxExemptionIncome * period));
+  if (income > INCOME_TRESHOLD_1 && income <= INCOME_TRESHOLD_2) {
+    return BASIC_EXEMPION_MAX - BASIC_EXEMPION_MAX / MAGIC_NUMBER * (income - INCOME_TRESHOLD_1);
   }
 
   return 0;

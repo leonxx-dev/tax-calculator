@@ -1,1 +1,1 @@
-export type PeriodType = "month" | "year";
+export type PeriodType = 1 | 12;

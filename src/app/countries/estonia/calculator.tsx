@@ -13,7 +13,7 @@ import { roundToDecimalPlace } from "@/utils";
 
 const Calculator = () => {
   const [income, setIncome] = useState(0);
-  const [period, setPeriod] = useState<PeriodType>("month");
+  const [period, setPeriod] = useState<PeriodType>(1);
 
   // Employer tax rates
   const socialTaxRate = 33; // 33% Social tax.
@@ -25,18 +25,14 @@ const Calculator = () => {
 
   const periods = [
     {
-      key: "month",
+      key: 1,
       label: "Monthly"
     },
     {
-      key: "year",
+      key: 12,
       label: "Annually"
-    }
+    },
   ];
-
-  const periodRate = useMemo(() => {
-    return period === 'month' ? 1 : 12;
-  }, [period]);
 
   const socialTax = useMemo(() => {
     return calculatePercentageBasedTax(income, socialTaxRate);
@@ -51,10 +47,10 @@ const Calculator = () => {
   }, [income, socialTax, employerUnemploymentInsurancePremium]);
 
   const incomeTax = useMemo(() => {
-    const taxExemption = calculateTaxExemption(income, periodRate);
+    const taxExemption = calculateTaxExemption(income, period);
     const taxableIncome = calculateTaxableIncome(income, taxExemption);
     return calculatePercentageBasedTax(taxableIncome, incomeTaxRate);
-  }, [income, periodRate]);
+  }, [income, period]);
 
   const employeeUnemploymentInsurancePremium = useMemo(() => {
     return calculatePercentageBasedTax(income, employeeUnemploymentInsurancePremiumRate);
