@@ -1,9 +1,6 @@
-const incomeTaxRate = 20; // 20% income tax
-const unemploymentInsuranceContributionRate = 1.6; // 1.6% unemployment insurance contribution
-const pensionContributionRate = 2; // 2% pension contribution
-const maxTaxExemptionIncome = 1200; // Below this income is where maximum tax exemption is applied
-const zeroTaxExemptionIncome = 2100; // Income where regular income tax is applied
-const maxTaxExemption = 654; // Maximum tax exemption amount
+const maxTaxExemptionIncome = 1200; // Monthly gross income. Below this income is where maximum tax exemption is applied.
+const zeroTaxExemptionIncome = 2100; // Monthly gross income. Income where regular income tax is applied.
+const maxTaxExemption = 654; // Maximum tax exemption amount.
 
 function calculateTaxExemption(income: number = 0, period: number) {
   if (income <= maxTaxExemptionIncome * period) {
@@ -17,27 +14,22 @@ function calculateTaxExemption(income: number = 0, period: number) {
   return 0;
 }
 
+function calculatePercentageBasedTax(income: number = 0, rate: number) {
+  return income * rate / 100;
+}
+
 function calculateTaxableIncome(income: number = 0, taxExemption: number) {
   const taxableIncome = income - taxExemption;
   return taxableIncome > 0 ? taxableIncome : 0;
 }
 
-function calculateIncomeTax(taxableIncome: number = 0) {
-  return taxableIncome * incomeTaxRate / 100;
-}
-
-function calculateUnemploymentInsuranceContribution(income: number = 0) {
-  return income * unemploymentInsuranceContributionRate / 100;
-}
-
-function calculatePensionContribution(income: number = 0) {
-  return income * pensionContributionRate / 100;
+function sumAll(...args: number[]) {
+  return args.reduce((acc, val) => acc + val, 0);
 }
 
 export {
-  calculateIncomeTax,
-  calculatePensionContribution,
+  calculatePercentageBasedTax,
   calculateTaxExemption,
   calculateTaxableIncome,
-  calculateUnemploymentInsuranceContribution
+  sumAll,
 }
