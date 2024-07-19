@@ -1,1 +1,3 @@
-export type PeriodType = 1 | 12;
+export type PeriodType = "monthly" | "annually";
+
+export type SalaryViewType = "employee" | "employer";

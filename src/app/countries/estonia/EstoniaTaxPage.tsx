@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Tax exemption calculation taklen from:
+ * Tax exemption calculation taken from:
  * https://www.sotsiaalkindlustusamet.ee/en/pension-and-benefits/pension-amount/benefits-and-pension-taxed-income-tax
  */
 
@@ -13,10 +13,10 @@ import Calculator from "./Calculator";
 const EstoniaTaxPage = () => {
   return (
     <>
-      <h1>Estonia Personal Income Tax Calculator</h1>
+      {/* <h1>Estonia Personal Income Tax Calculator</h1> */}
       <Calculator />
     </>
   )
 }
 
-export default EstoniaTaxPage
+export default EstoniaTaxPage;

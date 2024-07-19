@@ -1,15 +1,16 @@
 import constants from "./constants";
 import { PeriodType } from "@/types";
 
-function calculateTaxExemption(income: number = 0, period: PeriodType) {
+function calculateTaxExemption(income: number = 0, period: PeriodType = "monthly") {
   /**
    * All constants are monthly based.
    * Period can be 1 for monthly income and 12 for annual.
    */
-  const INCOME_TRESHOLD_1 = constants.INCOME_TRESHOLD_1 * period;
-  const INCOME_TRESHOLD_2 = constants.INCOME_TRESHOLD_2 * period;
-  const BASIC_EXEMPION_MAX = constants.BASIC_EXEMPION_MAX * period;
-  const MAGIC_NUMBER = constants.MAGIC_NUMBER * period;
+  const PERIOD_COEFFICIENT = period === "monthly" ? 1 : 12;
+  const INCOME_TRESHOLD_1 = constants.INCOME_TRESHOLD_1 * PERIOD_COEFFICIENT;
+  const INCOME_TRESHOLD_2 = constants.INCOME_TRESHOLD_2 * PERIOD_COEFFICIENT;
+  const BASIC_EXEMPION_MAX = constants.BASIC_EXEMPION_MAX * PERIOD_COEFFICIENT;
+  const MAGIC_NUMBER = constants.MAGIC_NUMBER * PERIOD_COEFFICIENT;
   
   if (income <= INCOME_TRESHOLD_1) {
     return BASIC_EXEMPION_MAX;
