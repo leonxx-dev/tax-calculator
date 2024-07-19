@@ -1,0 +1,24 @@
+import { NationalIncomeTaxBracketType } from "./types";
+
+const MUNICIPALITY_COUNTRY_TAX_RATE = 22;
+// Define the tax brackets and rates
+const NATIONAL_INCOME_TAX_BRACKETS: NationalIncomeTaxBracketType[] = [
+  { limit: 1350000, rate: 0.176 },
+  { limit: 937900, rate: 0.166 },
+  { limit: 670000, rate: 0.136 },
+  { limit: 292850, rate: 0.04 },
+  { limit: 208050, rate: 0.017 }
+];
+const SOCIAL_SECURITY_CONTRIBUTION_RATE = 7.8;
+const NATIONAL_INSURANCE_CONTRIBUTION_RATES = [14.1, 10.6, 7.9, 6.4, 5.1, 0]; // This is list of % depending on the municipality zone.
+const NATIONAL_INSURANCE_CONTRIBUTION_BONUS_RATE = 5; // on wages 850 000+.
+const NATIONAL_INSURANCE_CONTRIBUTION_BONUS_LIMIT = 850000;
+
+export default {
+  MUNICIPALITY_COUNTRY_TAX_RATE,
+  NATIONAL_INCOME_TAX_BRACKETS,
+  SOCIAL_SECURITY_CONTRIBUTION_RATE,
+  NATIONAL_INSURANCE_CONTRIBUTION_RATES,
+  NATIONAL_INSURANCE_CONTRIBUTION_BONUS_RATE,
+  NATIONAL_INSURANCE_CONTRIBUTION_BONUS_LIMIT
+}

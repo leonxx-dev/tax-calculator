@@ -4,12 +4,10 @@ import { useState, useMemo, useEffect } from "react";
 import { Input, Divider, Tabs, Tab, Card } from "@nextui-org/react";
 import { PeriodType, SalaryViewType } from "@/types";
 import {
-  calculatePercentageBasedTax,
   calculateTaxExemption,
   calculateTaxableIncome,
-  sumAll
 } from "./functions";
-import { roundToDecimalPlace } from "@/utils";
+import { roundToDecimalPlace, sumAll, calculatePercentageBasedTax } from "@/utils";
 import constants from "./constants";
 
 const Calculator = () => {
@@ -155,7 +153,7 @@ const Calculator = () => {
       
 
       <h2 className="text-default-400">Net Income</h2>
-      <div className="text-5xl">{ roundToDecimalPlace(netIncome, 2) } €</div>
+      <div className="text-3xl">{ roundToDecimalPlace(netIncome, 2) } €</div>
     </Card>
   )
 }

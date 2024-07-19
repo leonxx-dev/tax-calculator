@@ -1,5 +1,9 @@
 import roundToDecimalPlace from "./roundToDecimalPlace";
+import calculatePercentageBasedTax from "./calculatePercentageBasedTax";
+import sumAll from "./sumAll";
 
 export {
-  roundToDecimalPlace
+  roundToDecimalPlace,
+  calculatePercentageBasedTax,
+  sumAll
 }
