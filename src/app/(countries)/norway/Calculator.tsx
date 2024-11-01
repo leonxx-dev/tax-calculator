@@ -7,16 +7,13 @@
  */
 
 import { useState, useMemo } from "react"; 
-import { Input, Divider, Card, Tabs, Tab, Select, SelectItem } from "@nextui-org/react";
+import { Input, Divider, Card, Select, SelectItem, CardHeader } from "@nextui-org/react";
 import { roundToDecimalPlace, calculatePercentageBasedTax, sumAll } from "@/utils";
 import constants from "./constants";
-import { PeriodType, SalaryViewType } from "@/types";
 import { calculateNationalIncomeTax } from "./functions";
 
 const NorwayPersonalIncomeCard = () => {
   const [income, setIncome] = useState(0);
-  const [period, setPeriod] = useState<PeriodType>("monthly");
-  const [salaryView, setSalaryView] = useState<SalaryViewType>("employee");
   const [nationalInsuranceRate, setNationalInsuranceRate] = useState(0);
 
   const MUNICIPALITY_COUNTRY_TAX_RATE = constants.MUNICIPALITY_COUNTRY_TAX_RATE;
@@ -25,55 +22,29 @@ const NorwayPersonalIncomeCard = () => {
   const NATIONAL_INSURANCE_CONTRIBUTION_BONUS_RATE = constants.NATIONAL_INSURANCE_CONTRIBUTION_BONUS_RATE;
   const NATIONAL_INSURANCE_CONTRIBUTION_BONUS_LIMIT = constants.NATIONAL_INSURANCE_CONTRIBUTION_BONUS_LIMIT;
 
-  const periods = [
-    {
-      key: "monthly",
-      label: "Monthly"
-    },
-    {
-      key: "annually",
-      label: "Annually"
-    },
-  ];
-
-  const salaryViews = [
-    {
-      key: "employee",
-      label: "Employee"
-    },
-    {
-      key: "employer",
-      label: "Employer"
-    },
-  ]
-
   const isBonusTaxApplied = useMemo(() => {
     return income > NATIONAL_INSURANCE_CONTRIBUTION_BONUS_LIMIT;
-  }, [income]);
+  }, [income, NATIONAL_INSURANCE_CONTRIBUTION_BONUS_LIMIT]);
 
   const totalNationalInsuranceRate = useMemo(() => {
     return isBonusTaxApplied ? nationalInsuranceRate + NATIONAL_INSURANCE_CONTRIBUTION_BONUS_RATE : nationalInsuranceRate
-  }, [income, nationalInsuranceRate, isBonusTaxApplied]);
+  }, [nationalInsuranceRate, isBonusTaxApplied, NATIONAL_INSURANCE_CONTRIBUTION_BONUS_RATE]);
 
   const nationalInsurance = useMemo(() => {
    return calculatePercentageBasedTax(income, totalNationalInsuranceRate);
   }, [income, totalNationalInsuranceRate]);
 
-  const totalTaxPaidByEmployer = useMemo(() => {
+  const totalTaxPaidByCompany = useMemo(() => {
     return sumAll(nationalInsurance);
   }, [nationalInsurance]);
 
-  const totalCostForEmployer = useMemo(() => {
-    return salaryView === "employee" ? income + totalTaxPaidByEmployer : income;
-  }, [income, salaryView, totalTaxPaidByEmployer]);
-
-  const grossIncome = useMemo(() => {
-    return salaryView === "employee" ? income : income - totalTaxPaidByEmployer;
-  }, [income, totalTaxPaidByEmployer, salaryView]);
+  const totalCostForCompany = useMemo(() => {
+    return income + totalTaxPaidByCompany;
+  }, [income, totalTaxPaidByCompany]);
 
   const municipalityTax = useMemo(() => {
-    return calculatePercentageBasedTax(grossIncome, MUNICIPALITY_COUNTRY_TAX_RATE);
-  }, [grossIncome]);
+    return calculatePercentageBasedTax(income, MUNICIPALITY_COUNTRY_TAX_RATE);
+  }, [income, MUNICIPALITY_COUNTRY_TAX_RATE]);
 
   const nationalIncomeTax = useMemo(() => {
     return calculateNationalIncomeTax(income)
@@ -85,8 +56,8 @@ const NorwayPersonalIncomeCard = () => {
   }, [income, nationalIncomeTax]);
 
   const socialSecurityContribution = useMemo(() => {
-    return calculatePercentageBasedTax(grossIncome, SOCIAL_SECURITY_CONTRIBUTION_RATE);
-  }, [income]);
+    return calculatePercentageBasedTax(income, SOCIAL_SECURITY_CONTRIBUTION_RATE);
+  }, [income, SOCIAL_SECURITY_CONTRIBUTION_RATE]);
 
   const totalTaxPaidOnIncome = useMemo(() => {
     return sumAll(municipalityTax, nationalIncomeTax, socialSecurityContribution);
@@ -96,14 +67,36 @@ const NorwayPersonalIncomeCard = () => {
     return income - totalTaxPaidOnIncome;
   }, [income, totalTaxPaidOnIncome]);
 
+  const totalPaidTax = useMemo(() => {
+    return sumAll(totalTaxPaidByCompany, totalTaxPaidOnIncome);
+  }, [totalTaxPaidByCompany, totalTaxPaidOnIncome]);
+
+  const totalPaidTaxPercent = useMemo(() => {
+    return ((totalPaidTax / totalCostForCompany) * 100) || 0;
+  }, [totalPaidTax, totalCostForCompany]);
+
   return (
-    <Card className="w-full items-center gap-2 px-0 py-4 sm:p-4">
-      <Tabs color="primary" aria-label="Salary view" radius="full" selectedKey={salaryView} onSelectionChange={(key) => setSalaryView(key as SalaryViewType)}>
-        { salaryViews.map(({ key, label }) => <Tab key={key} title={label} />) }
-      </Tabs>
-      <Tabs color="primary" aria-label="Period" radius="full" selectedKey={period} onSelectionChange={(key) => setPeriod(key as PeriodType)}>
-        { periods.map(({ key, label }) => <Tab key={key} title={label} />) }
-      </Tabs>
+    <Card className="w-full gap-2 px-0 py-4 sm:p-4">
+      <CardHeader className="px-4">
+        <h1 className="text-2xl bg-clip-text text-transparent bg-gradient-to-r to-blue-500 from-red-500">Norwegian Tax Calculator</h1>
+      </CardHeader>
+      <Input
+        className="px-4"
+        size="lg"
+        type="number"
+        label="Gross salary"
+        min="0"
+        defaultValue="0"
+        placeholder="0"
+        labelPlacement="outside"
+        value={income.toString()}
+        onChange={({ target }) => setIncome(parseInt(target.value || "0"))}
+        endContent={
+          <div className="pointer-events-none flex items-center">
+            <span className="text-default-500">NOK</span>
+          </div>
+        }
+      />
       <Select 
         label="National Insurance Rate"
         labelPlacement="outside"
@@ -124,63 +117,55 @@ const NorwayPersonalIncomeCard = () => {
           </SelectItem>
         ))}
       </Select>
-      <Input
-        className="px-4"
-        size="lg"
-        type="number"
-        label={ salaryView === "employee" ? "Gross salary" : "Employee cost" }
-        min="0"
-        defaultValue="0"
-        placeholder="0"
-        labelPlacement="outside"
-        value={income.toString()}
-        onChange={({ target }) => setIncome(parseInt(target.value || "0"))}
-        endContent={
-          <div className="pointer-events-none flex items-center">
-            <span className="text-default-500">NOK</span>
-          </div>
-        }
-      />
-
-      <div className="w-full flex flex-col">
-        <div className="p-4">
-          <h2 className="text-default-400">Employer Costs</h2>
-          <div className="w-full flex justify-between text-default-600">
-            <div>National Insurance <span className="italic text-danger">{ totalNationalInsuranceRate }%</span></div>
-            <div>{ roundToDecimalPlace(nationalInsurance, 2) } NOK</div>
-          </div>
-          {isBonusTaxApplied && <div className="italic text-warning">Extra { NATIONAL_INSURANCE_CONTRIBUTION_BONUS_RATE }% applied on salaries 850k+</div>}
-          <Divider className="my-2" />
-          <div className="w-full flex justify-between items-center text-default-600">
-            <div>Total</div>
-            <div className="text-2xl">{ roundToDecimalPlace(totalCostForEmployer, 2) } NOK</div>
-          </div>
+      <div className="w-full flex justify-around py-2">
+        <div className="justify-items-center">
+          <div className="text-default-400">Person gets</div>
+          <div className="text-2xl bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-cyan-300">{ roundToDecimalPlace(netIncome, 0) }</div>
         </div>
 
-        <div  className="p-4">
-          <h2 className="text-default-400">Employee Tax Breakdown</h2>
+        <div className="justify-items-center">
+          <div className="text-default-400">Company spend</div>
+          <div className="text-2xl bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-cyan-300">{ roundToDecimalPlace(totalCostForCompany, 0) }</div>
+        </div>
+      </div>
+      <div className="w-full flex flex-col px-4">
+        <div className="p-1">
+          <h2 className="text-default-700 text-2xl">Tax Breakdown</h2>
+        </div>
+        <div className="p-1">
+          <h2 className="text-default-400">Company pay</h2>
+          <div className="w-full flex justify-between text-default-600">
+            <div>National Insurance <span className="italic text-danger">{ totalNationalInsuranceRate }%</span></div>
+            <div>{ roundToDecimalPlace(nationalInsurance, 0) }</div>
+          </div>
+          {isBonusTaxApplied && <div className="italic text-warning">Extra { NATIONAL_INSURANCE_CONTRIBUTION_BONUS_RATE }% applied on salaries 850k+</div>}
+          <Divider className="my-1" />
+        </div>
+
+        <div  className="p-1">
+          <h2 className="text-default-400">Person pay</h2>
           <div className="w-full flex justify-between text-default-600">
             <div>Municipality Tax <span className="italic text-danger">{ MUNICIPALITY_COUNTRY_TAX_RATE }%</span></div>
-            <div>{ roundToDecimalPlace(municipalityTax, 2) } NOK</div>
+            <div>{ roundToDecimalPlace(municipalityTax, 0) }</div>
           </div>
           <div className="w-full flex justify-between text-default-600">
             <div>National Tax <span className="italic text-danger">{ roundToDecimalPlace(nationalIncomeTaxRate, 2) }%</span></div>
-            <div>{ roundToDecimalPlace(nationalIncomeTax, 2) } NOK</div>
+            <div>{ roundToDecimalPlace(nationalIncomeTax, 0) }</div>
           </div>
           <div className="w-full flex justify-between text-default-600">
             <div>Social Security <span className="italic text-danger">{ SOCIAL_SECURITY_CONTRIBUTION_RATE }%</span></div>
-            <div>{ roundToDecimalPlace(socialSecurityContribution, 2) } NOK</div>
+            <div>{ roundToDecimalPlace(socialSecurityContribution, 0) }</div>
           </div>
           <Divider className="my-2" />
-          <div className="w-full flex justify-between items-center text-default-600">
-            <div>Total</div>
-            <div className="text-2xl">{ roundToDecimalPlace(totalTaxPaidOnIncome, 2) } NOK</div>
+          <div className="p-1">
+            <h2 className="text-default-400">Government get</h2>
+            <div className="w-full flex justify-between text-default-600">
+              <div>Tax Summary <span className="italic text-danger">{ roundToDecimalPlace(totalPaidTaxPercent, 2) }%</span></div>
+              <div>{ roundToDecimalPlace(totalPaidTax, 0) }</div>
+            </div>
           </div>
         </div>
       </div>
-      
-      <h2 className="text-default-400">Net Income</h2>
-      <div className="text-3xl">{ roundToDecimalPlace(netIncome, 2) } NOK</div>
     </Card>
   )
 }

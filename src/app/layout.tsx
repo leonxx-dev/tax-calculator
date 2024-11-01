@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Inter } from "next/font/google";
 import { Providers } from "./providers";
 import "./globals.css";
@@ -17,6 +18,7 @@ export default function RootLayout({
 }>) {
   return(
     <html lang="en" className="dark">
+      <Script src="https://kit.fontawesome.com/6d540836f0.js" />
       <body className={inter.className}>
         <Providers>
           { children }
